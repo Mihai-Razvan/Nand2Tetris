@@ -42,5 +42,32 @@ CHIP ALU {
         ng; // 1 if (out < 0),  0 otherwise
 
     PARTS:
-   // Put you code here:
+    Not    (in=zx, out=notzx);
+    And16  (a=x, b[0]=notzx, b[1]=notzx, b[2]=notzx, b[3]=notzx, b[4]=notzx, b[5]=notzx, b[6]=notzx, b[7]=notzx, b[8]=notzx, b[9]=notzx, b[10]=notzx, b[11]=notzx, b[12]=notzx, b[13]=notzx, b[14]=notzx, b[15]=notzx, out=xAfterzx);
+
+    Not    (in=zy, out=notzy);
+    And16  (a=y, b[0]=notzy, b[1]=notzy, b[2]=notzy, b[3]=notzy, b[4]=notzy, b[5]=notzy, b[6]=notzy, b[7]=notzy, b[8]=notzy, b[9]=notzy, b[10]=notzy, b[11]=notzy, b[12]=notzy, b[13]=notzy, b[14]=notzy, b[15]=notzy, out=yAfterzy);
+
+    Not16  (in=xAfterzx, out=notxAfterzx);
+    Mux16  (a=xAfterzx, b=notxAfterzx, sel=nx, out=xAfternx);
+ 
+    Not16  (in=yAfterzy, out=notyAfterzy);
+    Mux16  (a=yAfterzy, b=notyAfterzy, sel=ny, out=yAfterny);
+
+    And16  (a=xAfternx, b=yAfterny, out=xAndy);
+    Add16  (a=xAfternx, b=yAfterny, out=xPlusy);
+    Mux16  (a=xAndy, b=xPlusy, sel=f, out=resultAfterf);
+ 
+    Not16  (in=resultAfterf, out=notresultAfterf);
+    Mux16  (a=resultAfterf, b=notresultAfterf, sel=no, out=endResult);
+    And16  (a=endResult, b=endResult, out[0..7]=endResultLow8, out[8..15]=endResultHigh8);
+    
+    Or8Way (in=endResultLow8, out=outFirstHalfOr);
+    Or8Way (in=endResultHigh8, out=outSecondHalfOr);
+    Or     (a=outFirstHalfOr, b=outSecondHalfOr, out=exist1);
+    Not    (in=exist1, out=zr);
+
+    And16  (a=endResult, b=endResult, out[0..14]=first15, out[15]=ng);   //out[15] is the MSB
+   
+    And16  (a=endResult, b=endResult, out=out);   
 }
