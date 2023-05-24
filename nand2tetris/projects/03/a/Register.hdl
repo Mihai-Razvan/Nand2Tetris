@@ -14,5 +14,68 @@ CHIP Register {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    Mux (a=dffOut0, b=in[0], sel=load, out=muxOut0);
+    DFF (in=muxOut0, out=dffOut0);
+    And (a=dffOut0, b=dffOut0, out=out[0]);
+
+    Mux (a=dffOut1, b=in[1], sel=load, out=muxOut1);
+    DFF (in=muxOut1, out=dffOut1);
+    And (a=dffOut1, b=dffOut1, out=out[1]);
+
+    Mux (a=dffOut2, b=in[2], sel=load, out=muxOut2);
+    DFF (in=muxOut2, out=dffOut2);
+    And (a=dffOut2, b=dffOut2, out=out[2]);
+
+    Mux (a=dffOut3, b=in[3], sel=load, out=muxOut3);
+    DFF (in=muxOut3, out=dffOut3);
+    And (a=dffOut3, b=dffOut3, out=out[3]);
+
+    Mux (a=dffOut4, b=in[4], sel=load, out=muxOut4);
+    DFF (in=muxOut4, out=dffOut4);
+    And (a=dffOut4, b=dffOut4, out=out[4]);
+
+    Mux (a=dffOut5, b=in[5], sel=load, out=muxOut5);
+    DFF (in=muxOut5, out=dffOut5);
+    And (a=dffOut5, b=dffOut5, out=out[5]);
+
+    Mux (a=dffOut6, b=in[6], sel=load, out=muxOut6);
+    DFF (in=muxOut6, out=dffOut6);
+    And (a=dffOut6, b=dffOut6, out=out[6]);
+
+    Mux (a=dffOut7, b=in[7], sel=load, out=muxOut7);
+    DFF (in=muxOut7, out=dffOut7);
+    And (a=dffOut7, b=dffOut7, out=out[7]);
+
+    Mux (a=dffOut8, b=in[8], sel=load, out=muxOut8);
+    DFF (in=muxOut8, out=dffOut8);
+    And (a=dffOut8, b=dffOut8, out=out[8]);
+
+    Mux (a=dffOut9, b=in[9], sel=load, out=muxOut9);
+    DFF (in=muxOut9, out=dffOut9);
+    And (a=dffOut9, b=dffOut9, out=out[9]);
+
+    Mux (a=dffOut10, b=in[10], sel=load, out=muxOut10);
+    DFF (in=muxOut10, out=dffOut10);
+    And (a=dffOut10, b=dffOut10, out=out[10]);
+
+    Mux (a=dffOut11, b=in[11], sel=load, out=muxOut11);
+    DFF (in=muxOut11, out=dffOut11);
+    And (a=dffOut11, b=dffOut11, out=out[11]);
+
+    Mux (a=dffOut12, b=in[12], sel=load, out=muxOut12);
+    DFF (in=muxOut12, out=dffOut12);
+    And (a=dffOut12, b=dffOut12, out=out[12]);
+ 
+    Mux (a=dffOut13, b=in[13], sel=load, out=muxOut13);
+    DFF (in=muxOut13, out=dffOut13);
+    And (a=dffOut13, b=dffOut13, out=out[13]);
+ 
+    Mux (a=dffOut14, b=in[14], sel=load, out=muxOut14);
+    DFF (in=muxOut14, out=dffOut14);
+    And (a=dffOut14, b=dffOut14, out=out[14]);
+
+    Mux (a=dffOut15, b=in[15], sel=load, out=muxOut15);
+    DFF (in=muxOut15, out=dffOut15);
+    And (a=dffOut15, b=dffOut15, out=out[15]);
+
 }
