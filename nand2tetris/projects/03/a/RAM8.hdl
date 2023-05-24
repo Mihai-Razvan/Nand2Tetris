@@ -15,5 +15,25 @@ CHIP RAM8 {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    DMux8Way  (in=true, sel=address, a=adressDMuxa, b=adressDMuxb, c=adressDMuxc, d=adressDMuxd, e=adressDMuxe, f=adressDMuxf, g=adressDMuxg, h=adressDMuxh);  //address decoder
+    
+    And       (a=adressDMuxa, b=load, out=loadRa);
+    And       (a=adressDMuxb, b=load, out=loadRb);
+    And       (a=adressDMuxc, b=load, out=loadRc);
+    And       (a=adressDMuxd, b=load, out=loadRd);
+    And       (a=adressDMuxe, b=load, out=loadRe);
+    And       (a=adressDMuxf, b=load, out=loadRf);
+    And       (a=adressDMuxg, b=load, out=loadRg);
+    And       (a=adressDMuxh, b=load, out=loadRh);
+
+    Register  (in=in, load=loadRa, out=outRa);
+    Register  (in=in, load=loadRb, out=outRb);
+    Register  (in=in, load=loadRc, out=outRc);
+    Register  (in=in, load=loadRd, out=outRd);
+    Register  (in=in, load=loadRe, out=outRe);
+    Register  (in=in, load=loadRf, out=outRf);
+    Register  (in=in, load=loadRg, out=outRg);
+    Register  (in=in, load=loadRh, out=outRh);
+
+    Mux8Way16 (a=outRa, b=outRb, c=outRc, d=outRd, e=outRe, f=outRf, g=outRg, h=outRh, sel=address, out=out);
 }

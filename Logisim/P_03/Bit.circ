@@ -21,7 +21,7 @@ This file is intended to be loaded by Logisim (http://www.cburch.com/logisim/).
       <a name="valign" val="base"/>
     </tool>
   </lib>
-  <main name="main"/>
+  <main name="Bit"/>
   <options>
     <a name="gateUndefined" val="ignore"/>
     <a name="simlimit" val="1000"/>
@@ -54,8 +54,8 @@ This file is intended to be loaded by Logisim (http://www.cburch.com/logisim/).
     <tool lib="1" name="AND Gate"/>
     <tool lib="1" name="OR Gate"/>
   </toolbar>
-  <circuit name="main">
-    <a name="circuit" val="main"/>
+  <circuit name="Bit">
+    <a name="circuit" val="Bit"/>
     <a name="clabel" val=""/>
     <a name="clabelup" val="east"/>
     <a name="clabelfont" val="SansSerif plain 12"/>
@@ -72,6 +72,18 @@ This file is intended to be loaded by Logisim (http://www.cburch.com/logisim/).
     <wire from="(450,440)" to="(450,520)"/>
     <wire from="(520,340)" to="(520,390)"/>
     <wire from="(800,430)" to="(880,430)"/>
+    <comp lib="0" loc="(880,430)" name="Pin">
+      <a name="facing" val="west"/>
+      <a name="output" val="true"/>
+    </comp>
+    <comp lib="4" loc="(710,430)" name="D Flip-Flop">
+      <a name="trigger" val="high"/>
+    </comp>
+    <comp lib="0" loc="(520,340)" name="Pin">
+      <a name="facing" val="south"/>
+      <a name="label" val="load"/>
+      <a name="labelfont" val="SansSerif bold 18"/>
+    </comp>
     <comp lib="2" loc="(540,450)" name="Multiplexer">
       <a name="selloc" val="tr"/>
       <a name="enable" val="false"/>
@@ -79,19 +91,6 @@ This file is intended to be loaded by Logisim (http://www.cburch.com/logisim/).
     <comp lib="0" loc="(340,460)" name="Pin">
       <a name="label" val="in"/>
       <a name="labelfont" val="SansSerif bold 18"/>
-    </comp>
-    <comp lib="5" loc="(880,430)" name="LED">
-      <a name="label" val="out"/>
-      <a name="labelloc" val="east"/>
-      <a name="labelfont" val="SansSerif bold 18"/>
-    </comp>
-    <comp lib="0" loc="(520,340)" name="Pin">
-      <a name="facing" val="south"/>
-      <a name="label" val="load"/>
-      <a name="labelfont" val="SansSerif bold 18"/>
-    </comp>
-    <comp lib="4" loc="(710,430)" name="D Flip-Flop">
-      <a name="trigger" val="high"/>
     </comp>
   </circuit>
 </project>
