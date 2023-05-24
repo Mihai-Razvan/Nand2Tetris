@@ -15,5 +15,19 @@ CHIP RAM16K {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    And16     (a[0..13]=address, a[14..15]=true, b[0..13]=address, b[14..15]=true, out[0..11]=addressLow12, out[12..13]=addressHigh2);
+    
+    DMux4Way  (in=true, sel=addressHigh2, a=selectRAM4Ka, b=selectRAM4Kb, c=selectRAM4Kc, d=selectRAM4Kd);  //ram4K address decoder
+    
+    And       (a=selectRAM4Ka, b=load, out=loadRAM4Ka);
+    And       (a=selectRAM4Kb, b=load, out=loadRAM4Kb);
+    And       (a=selectRAM4Kc, b=load, out=loadRAM4Kc);
+    And       (a=selectRAM4Kd, b=load, out=loadRAM4Kd);
+
+    RAM4K     (in=in, address=addressLow12, load=loadRAM4Ka, out=outRAM4Ka);
+    RAM4K     (in=in, address=addressLow12, load=loadRAM4Kb, out=outRAM4Kb);
+    RAM4K     (in=in, address=addressLow12, load=loadRAM4Kc, out=outRAM4Kc);
+    RAM4K     (in=in, address=addressLow12, load=loadRAM4Kd, out=outRAM4Kd);
+
+    Mux4Way16 (a=outRAM4Ka, b=outRAM4Kb, c=outRAM4Kc, d=outRAM4Kd, sel=addressHigh2, out=out);
 }

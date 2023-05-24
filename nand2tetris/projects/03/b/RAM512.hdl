@@ -15,5 +15,27 @@ CHIP RAM512 {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    And16    (a[0..8]=address, a[9..15]=true, b[0..8]=address, b[9..15]=true, out[0..5]=addressLow6, out[6..8]=addressHigh3);
+    
+    DMux8Way  (in=true, sel=addressHigh3, a=selectRAM64a, b=selectRAM64b, c=selectRAM64c, d=selectRAM64d, e=selectRAM64e, f=selectRAM64f, g=selectRAM64g, h=selectRAM64h);  //ram64 address decoder
+    
+    And       (a=selectRAM64a, b=load, out=loadRAM64a);
+    And       (a=selectRAM64b, b=load, out=loadRAM64b);
+    And       (a=selectRAM64c, b=load, out=loadRAM64c);
+    And       (a=selectRAM64d, b=load, out=loadRAM64d);
+    And       (a=selectRAM64e, b=load, out=loadRAM64e);
+    And       (a=selectRAM64f, b=load, out=loadRAM64f);
+    And       (a=selectRAM64g, b=load, out=loadRAM64g);
+    And       (a=selectRAM64h, b=load, out=loadRAM64h);
+
+    RAM64     (in=in, address=addressLow6, load=loadRAM64a, out=outRAM64a);
+    RAM64     (in=in, address=addressLow6, load=loadRAM64b, out=outRAM64b);
+    RAM64     (in=in, address=addressLow6, load=loadRAM64c, out=outRAM64c);
+    RAM64     (in=in, address=addressLow6, load=loadRAM64d, out=outRAM64d);
+    RAM64     (in=in, address=addressLow6, load=loadRAM64e, out=outRAM64e);
+    RAM64     (in=in, address=addressLow6, load=loadRAM64f, out=outRAM64f);
+    RAM64     (in=in, address=addressLow6, load=loadRAM64g, out=outRAM64g);
+    RAM64     (in=in, address=addressLow6, load=loadRAM64h, out=outRAM64h);
+
+    Mux8Way16 (a=outRAM64a, b=outRAM64b, c=outRAM64c, d=outRAM64d, e=outRAM64e, f=outRAM64f, g=outRAM64g, h=outRAM64h, sel=addressHigh3, out=out);
 }

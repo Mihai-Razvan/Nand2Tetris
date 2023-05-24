@@ -15,5 +15,27 @@ CHIP RAM4K {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    And16    (a[0..11]=address, a[12..15]=true, b[0..11]=address, b[12..15]=true, out[0..8]=addressLow9, out[9..11]=addressHigh3);
+    
+    DMux8Way  (in=true, sel=addressHigh3, a=selectRAM512a, b=selectRAM512b, c=selectRAM512c, d=selectRAM512d, e=selectRAM512e, f=selectRAM512f, g=selectRAM512g, h=selectRAM512h);  //ram512 address decoder
+    
+    And       (a=selectRAM512a, b=load, out=loadRAM512a);
+    And       (a=selectRAM512b, b=load, out=loadRAM512b);
+    And       (a=selectRAM512c, b=load, out=loadRAM512c);
+    And       (a=selectRAM512d, b=load, out=loadRAM512d);
+    And       (a=selectRAM512e, b=load, out=loadRAM512e);
+    And       (a=selectRAM512f, b=load, out=loadRAM512f);
+    And       (a=selectRAM512g, b=load, out=loadRAM512g);
+    And       (a=selectRAM512h, b=load, out=loadRAM512h);
+
+    RAM512     (in=in, address=addressLow9, load=loadRAM512a, out=outRAM512a);
+    RAM512     (in=in, address=addressLow9, load=loadRAM512b, out=outRAM512b);
+    RAM512     (in=in, address=addressLow9, load=loadRAM512c, out=outRAM512c);
+    RAM512     (in=in, address=addressLow9, load=loadRAM512d, out=outRAM512d);
+    RAM512     (in=in, address=addressLow9, load=loadRAM512e, out=outRAM512e);
+    RAM512     (in=in, address=addressLow9, load=loadRAM512f, out=outRAM512f);
+    RAM512     (in=in, address=addressLow9, load=loadRAM512g, out=outRAM512g);
+    RAM512     (in=in, address=addressLow9, load=loadRAM512h, out=outRAM512h);
+
+    Mux8Way16 (a=outRAM512a, b=outRAM512b, c=outRAM512c, d=outRAM512d, e=outRAM512e, f=outRAM512f, g=outRAM512g, h=outRAM512h, sel=addressHigh3, out=out);
 }
