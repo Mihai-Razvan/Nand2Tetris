@@ -12,3 +12,38 @@
 // the screen should remain fully clear as long as no key is pressed.
 
 // Put your code here.
+
+(LOOP)
+@16384
+D=A
+@index
+M=D
+
+(DRAW_PIXEL)
+@24576
+D=M
+@DRAW_WHITE
+D;JEQ             //else will continue on DRAW_BLACK
+
+(DRAW_BLACK)
+@index
+A=M
+M=-1
+@CONTINUE
+0;JMP
+
+(DRAW_WHITE)
+@index
+A=M
+M=0
+
+(CONTINUE)
+@index
+M=M+1
+D=M
+@24576
+D=D-A
+@LOOP
+D;JEQ
+@DRAW_PIXEL    //else we haven't finished with all screen
+0;JMP
