@@ -27,5 +27,20 @@ CHIP Memory {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    And16    (a[0..14]=address, a[15]=true, b[0..14]=address, b[15]=true, out[0..13]=addressLow14, out[14]=MSB);
+    And16    (a[0..14]=address, a[15]=true, b[0..14]=address, b[15]=true, out[0..12]=addressLow13, out[13]=selDevice);  
+    
+    DMux     (in=true, sel=MSB, a=selectRAM16K, b=selectIO);
+
+    And      (a=selectRAM16K, b=load, out=loadRAM16K);
+    And      (a=selectIO, b=load, out=loadIO);
+
+    RAM16K   (in=in, address=addressLow14, load=loadRAM16K, out=outRAM16K);   //the 16K RAM
+    RAM16K   (in=in, address=addressLow14, load=loadIO, out=outIO);           //Screen & keyboar & invalid area
+  
+    Mux16    (a=screenOut, b=keyboardOut, sel=selDevice, out=outDevice);
+    Mux16    (a=outRAM16K, b=outDevice, sel=MSB, out=out);
+    
+    Keyboard (out=keyboardOut);
+    Screen   (in=in, load=loadIO, address=addressLow13, out=screenOut);
 }

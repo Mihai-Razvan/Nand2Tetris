@@ -39,5 +39,42 @@ CHIP CPU {
         pc[15];          // address of next instruction
 
     PARTS:
-    // Put your code here:
+    //instruction bits selectors
+    And16    (a=instruction, b=instruction, out[0]=instructionBit0);
+    And16    (a=instruction, b=instruction, out[1]=instructionBit1);
+    And16    (a=instruction, b=instruction, out[2]=instructionBit2);
+    And16    (a=instruction, b=instruction, out[3]=instructionBit3);
+    And16    (a=instruction, b=instruction, out[4]=instructionBit4);
+    And16    (a=instruction, b=instruction, out[5]=instructionBit5);
+    And16    (a=instruction, b=instruction, out[6]=instructionBit6);
+    And16    (a=instruction, b=instruction, out[7]=instructionBit7);
+    And16    (a=instruction, b=instruction, out[8]=instructionBit8);
+    And16    (a=instruction, b=instruction, out[9]=instructionBit9);
+    And16    (a=instruction, b=instruction, out[10]=instructionBit10);
+    And16    (a=instruction, b=instruction, out[11]=instructionBit11);
+    And16    (a=instruction, b=instruction, out[12]=instructionBit12);
+    And16    (a=instruction, b=instruction, out[15]=instructionBit15);
+
+    Mux16    (a=instruction, b=ALUout, sel=instructionBit15, out=regAmuxVal);        //decides the A value between input value and ALU out
+    Mux      (a=true, b=instructionBit5, sel=instructionBit15, out=loadA);
+    Register (in=regAmuxVal, load=loadA, out=registerA, out[0..14]=addressM);
+
+    Mux      (a=false, b=instructionBit4, sel=instructionBit15, out=loadD);
+    Register (in=ALUout, load=loadD, out=registerD);
+
+    Mux16    (a=registerA, b=inM, sel=instructionBit12, out=yForALU);   //decides the ALU y between A and M
+    ALU      (x=registerD, y=yForALU, zx=instructionBit11, nx=instructionBit10, zy=instructionBit9, ny=instructionBit8, f=instructionBit7, 
+              no=instructionBit6, out=ALUout, out=outM, zr=ALUzr, ng=ALUng);
+    And      (a=instructionBit3, b=instructionBit15, out=writeM);
+    //check if jump
+    Not      (in=ALUng, out=notALUng);
+    Not      (in=ALUzr, out=notALUzr);
+    And      (a=notALUng, b=notALUzr, out=higherThan0);
+    And      (a=instructionBit0, b=higherThan0, out=JCode0);
+    And      (a=instructionBit1, b=ALUzr, out=JCode1);
+    And      (a=instructionBit2, b=ALUng, out=JCode2);
+    Or8Way   (in[0]=JCode0, in[1]=JCode1, in[2]=JCode2, in[3..7]=false, out=JMP);
+    //control PC
+    And      (a=instructionBit15, b=JMP, out=loadPC);
+    PC       (in=registerA, load=loadPC, inc=true, reset=reset, out[0..14]=pc);
 }
