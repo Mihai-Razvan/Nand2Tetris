@@ -1,0 +1,21 @@
+# ninja log v5
+2	392	7071444643580913	CMakeFiles/Assembler.dir/main.cpp.obj	d3a62434506e15c3
+393	575	7071444645206664	Assembler.exe	2e7393c0f1902e40
+2	562	7071452511344072	CMakeFiles/Assembler.dir/main.cpp.obj	d3a62434506e15c3
+9	578	7071452511484164	CMakeFiles/Assembler.dir/Implementations/parser.cpp.obj	3b76cecdb4aae348
+579	826	7071452513843529	Assembler.exe	6e83896d3fe4c7b
+3	534	7071452885441795	CMakeFiles/Assembler.dir/main.cpp.obj	d3a62434506e15c3
+16	559	7071452885688333	CMakeFiles/Assembler.dir/Implementations/parser.cpp.obj	3b76cecdb4aae348
+559	761	7071452887481766	Assembler.exe	6e83896d3fe4c7b
+2	339	7071460106172452	CMakeFiles/Assembler.dir/main.cpp.obj	d3a62434506e15c3
+9	492	7071460107699668	CMakeFiles/Assembler.dir/Implementations/parser.cpp.obj	3b76cecdb4aae348
+492	628	7071460108948397	Assembler.exe	6e83896d3fe4c7b
+3	372	7071460460477005	CMakeFiles/Assembler.dir/main.cpp.obj	d3a62434506e15c3
+10	464	7071460461374747	CMakeFiles/Assembler.dir/Implementations/parser.cpp.obj	3b76cecdb4aae348
+464	727	7071460463927205	Assembler.exe	6e83896d3fe4c7b
+3	459	7071460947626960	CMakeFiles/Assembler.dir/Implementations/parser.cpp.obj	3b76cecdb4aae348
+459	599	7071460948944435	Assembler.exe	6e83896d3fe4c7b
+3	297	7071461275826383	CMakeFiles/Assembler.dir/main.cpp.obj	d3a62434506e15c3
+3	297	7071461575487198	Assembler.exe	6e83896d3fe4c7b
+4	408	7071461970232340	CMakeFiles/Assembler.dir/Implementations/parser.cpp.obj	3b76cecdb4aae348
+409	536	7071461971386843	Assembler.exe	6e83896d3fe4c7b
