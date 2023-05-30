@@ -1,7 +1,9 @@
 #include "Headers/parser.h"
+#include <string>
 
 using namespace std;
 
 int main() {
-    parser::readInputFile("Resources/input.txt");
+    std::string inputFileName = "Resources/input.txt";
+    parser::parseFile(inputFileName);
 }
