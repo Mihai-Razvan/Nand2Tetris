@@ -3,13 +3,17 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <iostream>
 
 namespace parser {
     std::vector<std::vector<std::string>> parseFile(std::string &fileName)
     {
         std::vector<std::string> crudeLines = readInputFile(fileName);
         std::vector<std::string> noWhiteSpaceLines = deleteWhiteSpace(crudeLines);
-        std::vector<std::vector<std::string>> parsedLines = parseAllLines(noWhiteSpaceLines);
+        std::vector<std::pair<std::string, int>> symbolTable = std::vector<std::pair<std::string, int>>();
+        parseSymbols(noWhiteSpaceLines, symbolTable);
+        int variablesNumber = 0;
+        std::vector<std::vector<std::string>> parsedLines = parseAllLines(noWhiteSpaceLines, symbolTable, variablesNumber);
 
         return parsedLines;
     }
@@ -68,34 +72,116 @@ namespace parser {
         return noCommentLines;
     }
 
-    std::vector<std::vector<std::string>> parseAllLines(std::vector<std::string> &lines)
+    void parseSymbols(std::vector<std::string> &lines, std::vector<std::pair<std::string, int>> &symbolTable)
     {
-        std::vector<std::vector<std::string>> parsedLines =std::vector<std::vector<std::string>>();
+        writePreDefinedSymbols(symbolTable);
+        writeLabelsAddress(lines, symbolTable);
+
+//        for(int i = 0; i < symbolTable.size(); i++)
+//            std::cout << symbolTable[i].first << " " << symbolTable[i].second << std::endl;
+    }
+
+    void writePreDefinedSymbols(std::vector<std::pair<std::string, int>> &symbolTable)
+    {
+        symbolTable.push_back(std::make_pair("R0", 0));
+        symbolTable.push_back(std::make_pair("R1", 1));
+        symbolTable.push_back(std::make_pair("R2", 2));
+        symbolTable.push_back(std::make_pair("R3", 3));
+        symbolTable.push_back(std::make_pair("R4", 4));
+        symbolTable.push_back(std::make_pair("R5", 5));
+        symbolTable.push_back(std::make_pair("R6", 6));
+        symbolTable.push_back(std::make_pair("R7", 7));
+        symbolTable.push_back(std::make_pair("R8", 8));
+        symbolTable.push_back(std::make_pair("R9", 9));
+        symbolTable.push_back(std::make_pair("R10", 10));
+        symbolTable.push_back(std::make_pair("R11", 11));
+        symbolTable.push_back(std::make_pair("R12", 12));
+        symbolTable.push_back(std::make_pair("R13", 13));
+        symbolTable.push_back(std::make_pair("R14", 14));
+        symbolTable.push_back(std::make_pair("R15", 15));
+        symbolTable.push_back(std::make_pair("SCREEN", 16384));
+        symbolTable.push_back(std::make_pair("KBD", 24576));
+        symbolTable.push_back(std::make_pair("SP", 0));
+        symbolTable.push_back(std::make_pair("LCL", 1));
+        symbolTable.push_back(std::make_pair("ARG", 2));
+        symbolTable.push_back(std::make_pair("THIS", 3));
+        symbolTable.push_back(std::make_pair("THAT", 4));
+    }
+
+    void writeLabelsAddress(std::vector<std::string> &lines, std::vector<std::pair<std::string, int>> &symbolTable)
+    {
+        int k = 0;
+        for(int i = 0; i < lines.size(); i++)
+            if(lines[i][0] == '(')
+            {
+                std::string label = lines[i].substr(1, lines[i].length() - 2);
+                symbolTable.push_back(std::make_pair(label, k));
+            }
+            else
+                k++;
+    }
+
+    int getSymbolValue(std::string symbol, std::vector<std::pair<std::string, int>> &symbolTable)
+    {
+        for(int i = 0; i < symbolTable.size(); i++)
+            if(symbolTable[i].first == symbol)
+                return symbolTable[i].second;
+
+        return -1;
+    }
+
+    std::vector<std::vector<std::string>> parseAllLines(std::vector<std::string> &lines, std::vector<std::pair<std::string, int>> &symbolTable, int &variablesNumber)
+    {
+        std::vector<std::vector<std::string>> parsedLines = std::vector<std::vector<std::string>>();
 
         for(int i = 0; i < lines.size(); i++)
         {
-            std::vector<std::string> parsedLine = parseLine(lines[i]);
-            parsedLines.push_back(parsedLine);
+            if(lines[i][0] != '(')
+
+            {
+                std::vector<std::string> parsedLine = parseLine(lines[i], symbolTable, variablesNumber);
+                parsedLines.push_back(parsedLine);
+            }
         }
 
         return parsedLines;
     }
 
-    std::vector<std::string> parseLine(std::string &str)
+    std::vector<std::string> parseLine(std::string &str, std::vector<std::pair<std::string, int>> &symbolTable, int &variablesNumber)
     {
         if(str[0] == '@')
-            return parseAInstruction(str);
+            return parseAInstruction(str, symbolTable, variablesNumber);
 
         return parseCInstruction(str);
     }
 
-    std::vector<std::string> parseAInstruction(std::string &str)
+    std::vector<std::string> parseAInstruction(std::string &str, std::vector<std::pair<std::string, int>> &symbolTable, int &variablesNumber)
     {
         std::vector<std::string> parsedInstruction = std::vector<std::string>();
         parsedInstruction.push_back("@");
-        parsedInstruction.push_back(str.substr(1, str.length() - 1));
+        std::string valueOrSymbol = str.substr(1, str.length() - 1);
+
+        if(utils::isNumber(valueOrSymbol))
+            parsedInstruction.push_back(valueOrSymbol);  //it means is a value
+        else
+            parsedInstruction.push_back(parseSymbolToValue(valueOrSymbol, symbolTable, variablesNumber));
 
         return parsedInstruction;
+    }
+
+    std::string parseSymbolToValue(std::string symbol, std::vector<std::pair<std::string, int>> &symbolTable, int &variablesNumber)
+    {
+        if(getSymbolValue(symbol, symbolTable) != -1)
+            return std::to_string(getSymbolValue(symbol, symbolTable));
+
+        return std::to_string(addVariableSymbolToTable(symbol, symbolTable, variablesNumber));
+    }
+
+    int addVariableSymbolToTable(std::string symbol, std::vector<std::pair<std::string, int>> &symbolTable, int &variablesNumber)
+    {
+        symbolTable.push_back(std::make_pair(symbol, 16 + variablesNumber));
+        variablesNumber++;
+        return 15 + variablesNumber;
     }
 
     std::vector<std::string> parseCInstruction(std::string &str)
