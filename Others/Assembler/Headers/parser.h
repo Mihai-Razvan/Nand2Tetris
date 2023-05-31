@@ -15,6 +15,8 @@ namespace parser {
     std::vector<std::string> parseLine(std::string &str);
     std::vector<std::string> parseAInstruction(std::string &str);
     std::vector<std::string> parseCInstruction(std::string &str);
+    std::vector<std::string> parseAssignCInstruction(std::string &str);
+    std::vector<std::string> parseJumpCInstruction(std::string &str);
 }
 
 #endif //ASSEMBLER_PARSER_H

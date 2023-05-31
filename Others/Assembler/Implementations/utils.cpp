@@ -1,6 +1,7 @@
 #include "../Headers/utils.h"
 #include <string>
-#include <iostream>
+#include <bitset>
+#include <fstream>
 
 namespace utils {
     void trim(std::string &str)
@@ -30,5 +31,17 @@ namespace utils {
                 str = str.substr(0, i);
                 break;
             }
+    }
+
+    std::string intToBinaryString(int x)
+    {
+        return std::bitset<15>(x).to_string();
+    }
+
+    void writeMachineCodeToFile(std::string fileName, std::vector<std::string> data)
+    {
+        std::ofstream fout(fileName);
+        for(int i = 0; i < data.size(); i++)
+            fout << data[i] << std::endl;
     }
 }

@@ -2,7 +2,6 @@
 #include "../Headers/utils.h"
 #include <string>
 #include <vector>
-#include <iostream>
 #include <fstream>
 
 namespace parser {
@@ -12,15 +11,7 @@ namespace parser {
         std::vector<std::string> noWhiteSpaceLines = deleteWhiteSpace(crudeLines);
         std::vector<std::vector<std::string>> parsedLines = parseAllLines(noWhiteSpaceLines);
 
-        for(int i = 0; i < parsedLines.size(); i++)
-        {
-            for(int j = 0; j < parsedLines[i].size(); j++)
-                std::cout << parsedLines[i][j] << " ";
-            std::cout << std::endl;
-        }
-
-        std::cout << "----- END OF FILE -----";
-        return std::vector<std::vector<std::string>>();
+        return parsedLines;
     }
 
     std::vector<std::string> readInputFile(std::string &fileName)
@@ -101,10 +92,47 @@ namespace parser {
     std::vector<std::string> parseAInstruction(std::string &str)
     {
         std::vector<std::string> parsedInstruction = std::vector<std::string>();
+        parsedInstruction.push_back("@");
+        parsedInstruction.push_back(str.substr(1, str.length() - 1));
+
+        return parsedInstruction;
     }
 
     std::vector<std::string> parseCInstruction(std::string &str)
     {
+        for(int i = 0; i < str.length(); i++)
+            if(str[i] == '=')
+                return parseAssignCInstruction(str);
 
+        return parseJumpCInstruction(str);
+    }
+
+    std::vector<std::string> parseAssignCInstruction(std::string &str)
+    {
+        std::vector<std::string> parsedInstruction = std::vector<std::string>();
+
+        int i = 0;
+        while(str[i] != '=')
+            i++;
+
+        parsedInstruction.push_back(str.substr(0, i));
+        parsedInstruction.push_back("=");
+        parsedInstruction.push_back(str.substr(i + 1, str.length() - i - 1));
+        return parsedInstruction;
+    }
+
+    std::vector<std::string> parseJumpCInstruction(std::string &str)
+    {
+        std::vector<std::string> parsedInstruction = std::vector<std::string>();
+
+        int i = 0;
+        while(str[i] != ';')
+            i++;
+
+        parsedInstruction.push_back(str.substr(0, i));
+        parsedInstruction.push_back(";");
+        parsedInstruction.push_back(str.substr(i + 1, str.length() - i - 1));
+
+        return parsedInstruction;
     }
 }

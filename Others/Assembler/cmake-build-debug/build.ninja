@@ -67,6 +67,12 @@ build CMakeFiles/Assembler.dir/Implementations/utils.cpp.obj: CXX_COMPILER__Asse
   OBJECT_DIR = CMakeFiles\Assembler.dir
   OBJECT_FILE_DIR = CMakeFiles\Assembler.dir\Implementations
 
+build CMakeFiles/Assembler.dir/Implementations/encoder.cpp.obj: CXX_COMPILER__Assembler_Debug D$:/Projects/Nand2Tetris/Others/Assembler/Implementations/encoder.cpp || cmake_object_order_depends_target_Assembler
+  DEP_FILE = CMakeFiles\Assembler.dir\Implementations\encoder.cpp.obj.d
+  FLAGS = -g -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\Assembler.dir
+  OBJECT_FILE_DIR = CMakeFiles\Assembler.dir\Implementations
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target Assembler
@@ -75,7 +81,7 @@ build CMakeFiles/Assembler.dir/Implementations/utils.cpp.obj: CXX_COMPILER__Asse
 #############################################
 # Link the executable Assembler.exe
 
-build Assembler.exe: CXX_EXECUTABLE_LINKER__Assembler_Debug CMakeFiles/Assembler.dir/main.cpp.obj CMakeFiles/Assembler.dir/Implementations/parser.cpp.obj CMakeFiles/Assembler.dir/Implementations/utils.cpp.obj
+build Assembler.exe: CXX_EXECUTABLE_LINKER__Assembler_Debug CMakeFiles/Assembler.dir/main.cpp.obj CMakeFiles/Assembler.dir/Implementations/parser.cpp.obj CMakeFiles/Assembler.dir/Implementations/utils.cpp.obj CMakeFiles/Assembler.dir/Implementations/encoder.cpp.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\Assembler.dir
