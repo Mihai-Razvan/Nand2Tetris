@@ -28,3 +28,7 @@
 526	680	7079474299835569	VMTranslator.exe	f0f46d69f1f044e6
 3	465	7079475915518417	CMakeFiles/VMTranslator.dir/main.cpp.obj	fda428ac8a3a7f30
 465	728	7079475918061615	VMTranslator.exe	f0f46d69f1f044e6
+2	1950	7080362978527845	CMakeFiles/VMTranslator.dir/Implementations/Translator.cpp.obj	a42faa49e3187a17
+1950	2889	7080362987695078	VMTranslator.exe	f0f46d69f1f044e6
+4	582	7080366329435986	CMakeFiles/VMTranslator.dir/Implementations/Translator.cpp.obj	a42faa49e3187a17
+583	788	7080366331377545	VMTranslator.exe	f0f46d69f1f044e6

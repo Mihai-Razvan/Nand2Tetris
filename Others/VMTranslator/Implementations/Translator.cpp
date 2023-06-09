@@ -239,15 +239,15 @@ void Translator::translatePopSegmentPointers(int value, std::string segmentAddre
     translatedVmInstruction.push_back("D=M");
     translatedVmInstruction.push_back("@" + std::to_string(value));
     translatedVmInstruction.push_back("D=D+A");
-    translatedVmInstruction.push_back("@addressPointedTo");
-    translatedVmInstruction.push_back("M=D");
     translatedVmInstruction.push_back("@SP");
-    translatedVmInstruction.push_back("A=M-1");
-    translatedVmInstruction.push_back("D=M");   //D=top stack value
-    translatedVmInstruction.push_back("@addressPointedTo");
+    translatedVmInstruction.push_back("A=M");
+    translatedVmInstruction.push_back("M=D");     //on the address pointed by SP will be the address on our segment
+    translatedVmInstruction.push_back("A=A-1");
+    translatedVmInstruction.push_back("D=M");     //D is now the second value on the stack (the one to be popped)
+    translatedVmInstruction.push_back("@SP");
+    translatedVmInstruction.push_back("A=M");
     translatedVmInstruction.push_back("A=M");
     translatedVmInstruction.push_back("M=D");
-
     translatedVmInstruction.push_back("@SP");
     translatedVmInstruction.push_back("M=M-1");
 }
