@@ -25,6 +25,9 @@ private:
     void translatePopTemp(int value);
     void translatePopPointer(int value);
     void translatePopSegmentPointers(int value, std::string segmentAddress);   //local, argument, this, that
+    void translate_LABEL_Instruction();
+    void translate_GOTO_Instruction();
+    void translate_IF_Instruction();
 
 public:
     static int compareLabelIndex;

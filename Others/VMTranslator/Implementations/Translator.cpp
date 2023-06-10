@@ -18,6 +18,12 @@ void Translator::translateVmInstruction() {
         translate_PUSH_Instruction();
     else if(instructionType == "C_POP")
         translate_POP_Instruction();
+    else if(instructionType == "C_LABEL")
+        translate_LABEL_Instruction();
+    else if(instructionType == "C_GOTO")
+        translate_GOTO_Instruction();
+    else if(instructionType == "C_IF")
+        translate_IF_Instruction();
 }
 
 void Translator::translate_ARITHMETIC_Instruction() {
@@ -254,4 +260,29 @@ void Translator::translatePopSegmentPointers(int value, std::string segmentAddre
 
 std::vector<std::string> &Translator::getTranslatedVmInstruction() {
     return translatedVmInstruction;
+}
+
+void Translator::translate_LABEL_Instruction()
+{
+    std::string label = parsedVmInstruction[1];
+    translatedVmInstruction.push_back("(" + label + ")");
+}
+
+void Translator::translate_GOTO_Instruction()
+{
+    std::string label = parsedVmInstruction[1];
+    translatedVmInstruction.push_back("@" + label);
+    translatedVmInstruction.push_back("0;JMP");
+}
+
+void Translator::translate_IF_Instruction()
+{
+    std::string label = parsedVmInstruction[1];
+    translatedVmInstruction.push_back("@SP");
+    translatedVmInstruction.push_back("A=M-1");
+    translatedVmInstruction.push_back("D=M");
+    translatedVmInstruction.push_back("@SP");
+    translatedVmInstruction.push_back("M=M-1");
+    translatedVmInstruction.push_back("@" + label);
+    translatedVmInstruction.push_back("D;JNE");
 }

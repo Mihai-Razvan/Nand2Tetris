@@ -30,6 +30,12 @@ const std::string Parser::getInstructionType(std::vector<std::string> parsedVmIn
         return "C_PUSH";
     else if(parsedVmInstruction[0] == "pop")
         return "C_POP";
+    else if(parsedVmInstruction[0] == "label")
+        return "C_LABEL";
+    else if(parsedVmInstruction[0] == "goto")
+        return "C_GOTO";
+    else if(parsedVmInstruction[0] == "if-goto")
+        return "C_IF";
     else
         return "C_ARITHMETIC";
 }
