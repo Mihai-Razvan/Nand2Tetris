@@ -10,6 +10,8 @@ private:
     std::vector<std::string> parsedVmInstruction;
     std::string instructionType;
     std::vector<std::string> translatedVmInstruction;
+    std::vector<std::pair<std::string, int>> functionReturnCounter;
+    std::string currentFunctionName;
 
     void translate_ARITHMETIC_Instruction();
     void translateOneParameterArithmetic();
@@ -28,6 +30,11 @@ private:
     void translate_LABEL_Instruction();
     void translate_GOTO_Instruction();
     void translate_IF_Instruction();
+    void translate_FUNCTION_Instruction();
+    void translate_RETURN_Instruction();
+    void translate_CALL_Instruction();
+
+    int getFunctionReturnCounter(std::string functionName);  //it also increases the counter
 
 public:
     static int compareLabelIndex;

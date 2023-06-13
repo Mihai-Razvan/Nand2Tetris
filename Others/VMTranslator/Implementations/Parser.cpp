@@ -36,6 +36,12 @@ const std::string Parser::getInstructionType(std::vector<std::string> parsedVmIn
         return "C_GOTO";
     else if(parsedVmInstruction[0] == "if-goto")
         return "C_IF";
+    else if(parsedVmInstruction[0] == "function")
+        return "C_FUNCTION";
+    else if(parsedVmInstruction[0] == "return")
+        return "C_RETURN";
+    else if(parsedVmInstruction[0] == "call")
+        return "C_CALL";
     else
         return "C_ARITHMETIC";
 }
