@@ -13,6 +13,11 @@ int main() {
     std::string outputFileName = "Resources/output.txt";
     std::ofstream fout(outputFileName);
 
+    fout << "// Bootstrap\n";
+    std::vector<std::string> bootInstructions = Translator::boot();
+    for(int j = 0; j < bootInstructions.size(); j++)
+        fout << bootInstructions[j] << std::endl;
+
     for(int i = 0; i < fileLines.size(); i++)
     {
         std::vector<std::string> parsedVmInstruction = Parser::parseVmInstruction(fileLines[i]);

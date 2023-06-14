@@ -15,4 +15,15 @@ namespace utils {
 
         return lines;
     }
+
+    std::string getFileName(std::string functionName)
+    {
+        for(int i = 0; i < functionName.length(); i++)
+            if(functionName[i] == '.')
+                return functionName.substr(0, i);
+
+        return "";
+    }
 }
+
+

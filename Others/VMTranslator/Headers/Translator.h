@@ -10,8 +10,8 @@ private:
     std::vector<std::string> parsedVmInstruction;
     std::string instructionType;
     std::vector<std::string> translatedVmInstruction;
-    std::vector<std::pair<std::string, int>> functionReturnCounter;
-    std::string currentFunctionName;
+    static std::vector<std::pair<std::string, int>> functionReturnCounter;
+    static std::string currentFunctionName;
 
     void translate_ARITHMETIC_Instruction();
     void translateOneParameterArithmetic();
@@ -40,6 +40,7 @@ public:
     static int compareLabelIndex;
 
     Translator(std::vector<std::string> &parsedVmInstruction);
+    static std::vector<std::string> boot();
     void translateVmInstruction();
     std::vector<std::string>& getTranslatedVmInstruction();
 };

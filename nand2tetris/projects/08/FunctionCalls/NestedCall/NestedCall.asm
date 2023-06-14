@@ -35,38 +35,38 @@ M=D
 @SP
 M=M-1
 // call Sys.main 0
-@$ret.0
+@Sys.init$ret.0
 D=A
 @SP
-A=M+1
+A=M
 M=D
 @SP
 M=M+1
 @LCL
 D=M
 @SP
-A=M+1
+A=M
 M=D
 @SP
 M=M+1
 @ARG
 D=M
 @SP
-A=M+1
+A=M
 M=D
 @SP
 M=M+1
 @THIS
 D=M
 @SP
-A=M+1
+A=M
 M=D
 @SP
 M=M+1
 @THAT
 D=M
 @SP
-A=M+1
+A=M
 M=D
 @SP
 M=M+1
@@ -82,7 +82,7 @@ D=M
 M=D
 @Sys.main
 0;JMP
-($ret.0)
+(Sys.init$ret.0)
 // pop temp 1
 @SP
 A=M
@@ -93,9 +93,9 @@ M=D
 @SP
 M=M-1
 // label LOOP
-(LOOP)
+(Sys.init$LOOP)
 // goto LOOP
-@LOOP
+@Sys.init$LOOP
 0;JMP
 // function Sys.main 5
 (Sys.main)
@@ -239,42 +239,42 @@ M=D
 @SP
 M=M+1
 // call Sys.add12 1
-@$ret.0
+@Sys.main$ret.0
 D=A
 @SP
-A=M+1
+A=M
 M=D
 @SP
 M=M+1
 @LCL
 D=M
 @SP
-A=M+1
+A=M
 M=D
 @SP
 M=M+1
 @ARG
 D=M
 @SP
-A=M+1
+A=M
 M=D
 @SP
 M=M+1
 @THIS
 D=M
 @SP
-A=M+1
+A=M
 M=D
 @SP
 M=M+1
 @THAT
 D=M
 @SP
-A=M+1
+A=M
 M=D
 @SP
 M=M+1
-@4
+@6
 D=A
 @SP
 D=M-D
@@ -286,7 +286,7 @@ D=M
 M=D
 @Sys.add12
 0;JMP
-($ret.0)
+(Sys.main$ret.0)
 // pop temp 0
 @SP
 A=M

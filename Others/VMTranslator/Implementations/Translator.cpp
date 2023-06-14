@@ -1,15 +1,17 @@
 #include "../Headers/Translator.h"
 #include "../Headers/Parser.h"
+#include "../Headers/utils.h"
 #include <iostream>
 #include <string.h>
 
 int Translator::compareLabelIndex = 0;
+std::vector<std::pair<std::string, int>> Translator::functionReturnCounter = std::vector<std::pair<std::string, int>>();
+std::string Translator::currentFunctionName = "";
 
 Translator::Translator(std::vector<std::string> &parsedVmInstruction) {
     this->parsedVmInstruction = parsedVmInstruction;
     this->instructionType = Parser::getInstructionType(parsedVmInstruction);
-    this->functionReturnCounter = std::vector<std::pair<std::string, int>>();
-    this->currentFunctionName = "";
+    boot();
 }
 
 void Translator::translateVmInstruction() {
@@ -69,7 +71,13 @@ void Translator::translateTwoParametersArithmetic() {
     else   //comparing operations
     {
         std::string compareTrueLabel = "COMPARE_TRUE_LABEL_" + std::to_string(compareLabelIndex);
+        if(currentFunctionName != "")
+            compareTrueLabel = currentFunctionName + "$" + compareTrueLabel;
+
         std::string compareContinueLabel = "COMPARE_CONTINUE_LABEL_" + std::to_string(compareLabelIndex);
+        if(currentFunctionName != "")
+            compareContinueLabel = currentFunctionName + "$" + compareContinueLabel;
+
         Translator::compareLabelIndex++;
 
         translatedVmInstruction.push_back("D=M-D");
@@ -133,7 +141,14 @@ void Translator::translatePushConstant(int value)
 
 void Translator::translatePushStatic(int value)
 {
-    translatedVmInstruction.push_back("@Foo." + std::to_string(value));
+    if(currentFunctionName != "" && utils::getFileName(currentFunctionName) != "")
+    {
+        std::string var = "@" + utils::getFileName(currentFunctionName);
+        translatedVmInstruction.push_back(var + "." + std::to_string(value));
+    }
+    else
+        translatedVmInstruction.push_back("@Foo." + std::to_string(value));
+
     translatedVmInstruction.push_back("D=M");
     translatedVmInstruction.push_back("@SP");
     translatedVmInstruction.push_back("A=M");
@@ -211,7 +226,15 @@ void Translator::translatePopStatic(int value)
     translatedVmInstruction.push_back("A=M");
     translatedVmInstruction.push_back("A=A-1");
     translatedVmInstruction.push_back("D=M");   //D=top stack value
-    translatedVmInstruction.push_back("@Foo." + std::to_string(value));
+
+    if(currentFunctionName != "" && utils::getFileName(currentFunctionName) != "")
+    {
+        std::string var = "@" + utils::getFileName(currentFunctionName);
+        translatedVmInstruction.push_back(var + "." + std::to_string(value));
+    }
+    else
+        translatedVmInstruction.push_back("@Foo." + std::to_string(value));
+
     translatedVmInstruction.push_back("M=D");
     translatedVmInstruction.push_back("@SP");
     translatedVmInstruction.push_back("M=M-1");
@@ -283,8 +306,7 @@ void Translator::translate_LABEL_Instruction()
 void Translator::translate_GOTO_Instruction()
 {
     std::string label = parsedVmInstruction[1];
-    if(currentFunctionName != "")
-        label = currentFunctionName + "$" + label;
+    label = currentFunctionName + "$" + label;
 
     translatedVmInstruction.push_back("@" + label);
     translatedVmInstruction.push_back("0;JMP");
@@ -324,24 +346,24 @@ void Translator::translate_FUNCTION_Instruction()
 
 void Translator::translate_RETURN_Instruction()
 {
-    currentFunctionName = "";
+ //   currentFunctionName = "";
     //endFrame = LCL
-    translatedVmInstruction.push_back("@LCL");
+    translatedVmInstruction.push_back("@LCL     //endFrame = LCL");
     translatedVmInstruction.push_back("D=M");
-    translatedVmInstruction.push_back("@endFrame");
+    translatedVmInstruction.push_back("@5");  //endFrame
     translatedVmInstruction.push_back("M=D");
 
-    //retAddr= = *(endFrame - 5);
-    translatedVmInstruction.push_back("@5");
+    //retAddr= = *(endFrame - 5)
+    translatedVmInstruction.push_back("@5     //retAddr= = *(endFrame - 5)");
     translatedVmInstruction.push_back("D=A");
-    translatedVmInstruction.push_back("@endFrame");
+    translatedVmInstruction.push_back("@5");   //endFrame
     translatedVmInstruction.push_back("A=M-D");
     translatedVmInstruction.push_back("D=M");     //D = *(endFrame - 5)
-    translatedVmInstruction.push_back("@retAddr");
+    translatedVmInstruction.push_back("@6");   //retAddr
     translatedVmInstruction.push_back("M=D");
 
     //*ARG = pop()
-    translatedVmInstruction.push_back("@SP");
+    translatedVmInstruction.push_back("@SP     //*ARG = pop()");
     translatedVmInstruction.push_back("A=M-1");
     translatedVmInstruction.push_back("D=M");    //D = top stack value
     translatedVmInstruction.push_back("@SP");
@@ -351,49 +373,49 @@ void Translator::translate_RETURN_Instruction()
     translatedVmInstruction.push_back("M=D");
 
     //SP = ARG + 1
-    translatedVmInstruction.push_back("@ARG");
+    translatedVmInstruction.push_back("@ARG     //SP = ARG + 1");
     translatedVmInstruction.push_back("D=M");
     translatedVmInstruction.push_back("@SP");
     translatedVmInstruction.push_back("M=D+1");
 
     //THAT = *(endFrame - 1)
-    translatedVmInstruction.push_back("@1");
+    translatedVmInstruction.push_back("@1     //THAT = *(endFrame - 1)");
     translatedVmInstruction.push_back("D=A");
-    translatedVmInstruction.push_back("@endFrame");
+    translatedVmInstruction.push_back("@5");   //endFrame
     translatedVmInstruction.push_back("A=M-D");
     translatedVmInstruction.push_back("D=M");     //D = *(endFrame - 1)
     translatedVmInstruction.push_back("@THAT");
     translatedVmInstruction.push_back("M=D");
 
     //THIS= *(endFrame - 2)
-    translatedVmInstruction.push_back("@2");
+    translatedVmInstruction.push_back("@2     //THIS= *(endFrame - 2)");
     translatedVmInstruction.push_back("D=A");
-    translatedVmInstruction.push_back("@endFrame");
+    translatedVmInstruction.push_back("@5");  //endFrame
     translatedVmInstruction.push_back("A=M-D");
     translatedVmInstruction.push_back("D=M");     //D = *(endFrame - 2)
     translatedVmInstruction.push_back("@THIS");
     translatedVmInstruction.push_back("M=D");
 
     //ARG = *(endFrame - 3)
-    translatedVmInstruction.push_back("@3");
+    translatedVmInstruction.push_back("@3     //ARG = *(endFrame - 3)");
     translatedVmInstruction.push_back("D=A");
-    translatedVmInstruction.push_back("@endFrame");
+    translatedVmInstruction.push_back("@5");   //endFrame
     translatedVmInstruction.push_back("A=M-D");
     translatedVmInstruction.push_back("D=M");     //D = *(endFrame - 3)
     translatedVmInstruction.push_back("@ARG");
     translatedVmInstruction.push_back("M=D");
 
     //LCL = *(endFrame - 4)
-    translatedVmInstruction.push_back("@4");
+    translatedVmInstruction.push_back("@4     //LCL = *(endFrame - 4)");
     translatedVmInstruction.push_back("D=A");
-    translatedVmInstruction.push_back("@endFrame");
+    translatedVmInstruction.push_back("@5");   //endFrame
     translatedVmInstruction.push_back("A=M-D");
     translatedVmInstruction.push_back("D=M");     //D = *(endFrame - 4)
     translatedVmInstruction.push_back("@LCL");
     translatedVmInstruction.push_back("M=D");
 
     //goto retAddr
-    translatedVmInstruction.push_back("@retAddr");
+    translatedVmInstruction.push_back("@6     //goto retAddr");    //retAddr
     translatedVmInstruction.push_back("A=M");
     translatedVmInstruction.push_back("0;JMP");
 }
@@ -402,56 +424,56 @@ void Translator::translate_CALL_Instruction()
 {
     std::string functionName = parsedVmInstruction[1];
     int argsNum = std::stoi(parsedVmInstruction[2]);
-    int argPosDifference = 5 - argsNum;
-    std::string returnLable = currentFunctionName + "$ret." + std::to_string(getFunctionReturnCounter(functionName));
+    int argPosDifference = 5 + argsNum;
+    std::string returnLabel = currentFunctionName + "$ret." + std::to_string(getFunctionReturnCounter(currentFunctionName));
 
     //push returnAddress
-    translatedVmInstruction.push_back("@" + returnLable);
+    translatedVmInstruction.push_back("@" + returnLabel + "     //push returnAddress");
     translatedVmInstruction.push_back("D=A");
     translatedVmInstruction.push_back("@SP");
-    translatedVmInstruction.push_back("A=M+1");
+    translatedVmInstruction.push_back("A=M");
     translatedVmInstruction.push_back("M=D");
     translatedVmInstruction.push_back("@SP");
     translatedVmInstruction.push_back("M=M+1");
 
     //push LCL
-    translatedVmInstruction.push_back("@LCL");
+    translatedVmInstruction.push_back("@LCL     //push LCL");
     translatedVmInstruction.push_back("D=M");
     translatedVmInstruction.push_back("@SP");
-    translatedVmInstruction.push_back("A=M+1");
+    translatedVmInstruction.push_back("A=M");
     translatedVmInstruction.push_back("M=D");
     translatedVmInstruction.push_back("@SP");
     translatedVmInstruction.push_back("M=M+1");
 
     //push ARG
-    translatedVmInstruction.push_back("@ARG");
+    translatedVmInstruction.push_back("@ARG     //push ARG");
     translatedVmInstruction.push_back("D=M");
     translatedVmInstruction.push_back("@SP");
-    translatedVmInstruction.push_back("A=M+1");
+    translatedVmInstruction.push_back("A=M");
     translatedVmInstruction.push_back("M=D");
     translatedVmInstruction.push_back("@SP");
     translatedVmInstruction.push_back("M=M+1");
 
     //push THIS
-    translatedVmInstruction.push_back("@THIS");
+    translatedVmInstruction.push_back("@THIS     //push THIS");
     translatedVmInstruction.push_back("D=M");
     translatedVmInstruction.push_back("@SP");
-    translatedVmInstruction.push_back("A=M+1");
+    translatedVmInstruction.push_back("A=M");
     translatedVmInstruction.push_back("M=D");
     translatedVmInstruction.push_back("@SP");
     translatedVmInstruction.push_back("M=M+1");
 
     //push THAT
-    translatedVmInstruction.push_back("@THAT");
+    translatedVmInstruction.push_back("@THAT     //push THAT");
     translatedVmInstruction.push_back("D=M");
     translatedVmInstruction.push_back("@SP");
-    translatedVmInstruction.push_back("A=M+1");
+    translatedVmInstruction.push_back("A=M");
     translatedVmInstruction.push_back("M=D");
     translatedVmInstruction.push_back("@SP");
     translatedVmInstruction.push_back("M=M+1");
 
     //ARG = SP - 5 - nArgs
-    translatedVmInstruction.push_back("@" + std::to_string(argPosDifference));
+    translatedVmInstruction.push_back("@" + std::to_string(argPosDifference) + "     //ARG = SP - 5 - nArgs");
     translatedVmInstruction.push_back("D=A");
     translatedVmInstruction.push_back("@SP");
     translatedVmInstruction.push_back("D=M-D");
@@ -459,17 +481,17 @@ void Translator::translate_CALL_Instruction()
     translatedVmInstruction.push_back("M=D");
 
     //LCL = SP
-    translatedVmInstruction.push_back("@SP");
+    translatedVmInstruction.push_back("@SP     //LCL = SP");
     translatedVmInstruction.push_back("D=M");
     translatedVmInstruction.push_back("@LCL");
     translatedVmInstruction.push_back("M=D");
 
     //goto functionName
-    translatedVmInstruction.push_back("@" + functionName);
+    translatedVmInstruction.push_back("@" + functionName + "     //goto functionName");
     translatedVmInstruction.push_back("0;JMP");
 
     //(returnAddress)
-    translatedVmInstruction.push_back("(" + returnLable + ")");
+    translatedVmInstruction.push_back("(" + returnLabel + ")     //(returnAddress)");
 }
 
 int Translator::getFunctionReturnCounter(std::string functionName)
@@ -483,4 +505,87 @@ int Translator::getFunctionReturnCounter(std::string functionName)
 
     functionReturnCounter.push_back(std::make_pair(functionName, 0));
     return 0;
+}
+
+std::vector<std::string> Translator::boot()
+{
+    std::vector<std::string> bootInstructions = std::vector<std::string>();
+    //SP = 256
+    bootInstructions.push_back("@256");
+    bootInstructions.push_back("D=A");
+    bootInstructions.push_back("@SP");
+    bootInstructions.push_back("M=D");
+
+    //call Sys.init
+    int argsNum = 0;
+    int argPosDifference = 5 + argsNum;
+    std::string returnLabel = "Bootstraping$ret.Sys.init";
+
+    //push returnAddress
+    bootInstructions.push_back("@" + returnLabel + "     //push returnAddress");
+    bootInstructions.push_back("D=A");
+    bootInstructions.push_back("@SP");
+    bootInstructions.push_back("A=M");
+    bootInstructions.push_back("M=D");
+    bootInstructions.push_back("@SP");
+    bootInstructions.push_back("M=M+1");
+
+    //push LCL
+    bootInstructions.push_back("@LCL     //push LCL");
+    bootInstructions.push_back("D=M");
+    bootInstructions.push_back("@SP");
+    bootInstructions.push_back("A=M");
+    bootInstructions.push_back("M=D");
+    bootInstructions.push_back("@SP");
+    bootInstructions.push_back("M=M+1");
+
+    //push ARG
+    bootInstructions.push_back("@ARG     //push ARG");
+    bootInstructions.push_back("D=M");
+    bootInstructions.push_back("@SP");
+    bootInstructions.push_back("A=M");
+    bootInstructions.push_back("M=D");
+    bootInstructions.push_back("@SP");
+    bootInstructions.push_back("M=M+1");
+
+    //push THIS
+    bootInstructions.push_back("@THIS     //push THIS");
+    bootInstructions.push_back("D=M");
+    bootInstructions.push_back("@SP");
+    bootInstructions.push_back("A=M");
+    bootInstructions.push_back("M=D");
+    bootInstructions.push_back("@SP");
+    bootInstructions.push_back("M=M+1");
+
+    //push THAT
+    bootInstructions.push_back("@THAT     //push THAT");
+    bootInstructions.push_back("D=M");
+    bootInstructions.push_back("@SP");
+    bootInstructions.push_back("A=M");
+    bootInstructions.push_back("M=D");
+    bootInstructions.push_back("@SP");
+    bootInstructions.push_back("M=M+1");
+
+    //ARG = SP - 5 - nArgs
+    bootInstructions.push_back("@" + std::to_string(argPosDifference) + "     //ARG = SP - 5 - nArgs");
+    bootInstructions.push_back("D=A");
+    bootInstructions.push_back("@SP");
+    bootInstructions.push_back("D=M-D");
+    bootInstructions.push_back("@ARG");
+    bootInstructions.push_back("M=D");
+
+    //LCL = SP
+    bootInstructions.push_back("@SP     //LCL = SP");
+    bootInstructions.push_back("D=M");
+    bootInstructions.push_back("@LCL");
+    bootInstructions.push_back("M=D");
+
+    //goto functionName
+    bootInstructions.push_back("@Sys.init     //goto functionName");
+    bootInstructions.push_back("0;JMP");
+
+    //(returnAddress)
+    bootInstructions.push_back("(" + returnLabel + ")     //(returnAddress)");
+
+    return bootInstructions;
 }
